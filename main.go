@@ -7,20 +7,16 @@ import (
 	"os"
 )
 
-type appState int
-
-const (
-	serverMode appState = iota
-	clientMode
-)
-
 var w io.Writer
 
 func main() {
 	w = os.Stdout
+	var headerlist headers
+	var datavar data
 	serverflag := flag.Bool("s", false, "server mode usage: handy -s 127.0.0.1:8080")
-	clientflag := flag.Bool("c", false, "client mode usage: handy -c method url")
-	headerflag := flag.Bool("h", false, "set headers")
+	clientflag := flag.Bool("c", false, "client mode usage: handy -c -h 'header' -d 'body data' method url")
+	flag.Var(&headerlist, "h", "headers")
+	flag.Var(&datavar, "d", "data var")
 	flag.Parse()
 	switch {
 	case *serverflag:
@@ -34,9 +30,9 @@ func main() {
 	case *clientflag:
 		var client *clientState
 		if len(flag.Args()) == 1 {
-			client = newClient("get", flag.Arg(0))
+			client = newClient("get", flag.Arg(0), headerlist, datavar)
 		} else if len(flag.Args()) == 2 && flag.Arg(0) == "get" || flag.Arg(0) == "post" {
-			client = newClient(flag.Arg(0), flag.Arg(1))
+			client = newClient(flag.Arg(0), flag.Arg(1), headerlist, datavar)
 		} else {
 			log.Fatal("invalid usage")
 		}
