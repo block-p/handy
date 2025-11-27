@@ -1,6 +1,9 @@
 package main
 
 import (
+	"flag"
+	"io"
+	"log"
 	"os"
 )
 
@@ -11,24 +14,35 @@ const (
 	clientMode
 )
 
+var w io.Writer
+
 func main() {
-
-	args := os.Args[1:]
+	w = os.Stdout
+	serverflag := flag.Bool("s", false, "server mode usage: handy -s 127.0.0.1:8080")
+	clientflag := flag.Bool("c", false, "client mode usage: handy -c method url")
+	headerflag := flag.Bool("h", false, "set headers")
+	flag.Parse()
 	switch {
-	case len(args) < 2:
-
-		server := newServer("")
+	case *serverflag:
+		var server *serverState
+		if len(flag.Args()) == 0 {
+			server = newServer("")
+		} else {
+			server = newServer(flag.Arg(0))
+		}
 		server.run()
-	case args[0] == "s":
-		server := newServer(args[1])
-		server.run()
-	case args[0] == "get" || args[0] == "post" && len(args) > 2:
-
-		client := newClient(args[0], args[1])
+	case *clientflag:
+		var client *clientState
+		if len(flag.Args()) == 1 {
+			client = newClient("get", flag.Arg(0))
+		} else if len(flag.Args()) == 2 && flag.Arg(0) == "get" || flag.Arg(0) == "post" {
+			client = newClient(flag.Arg(0), flag.Arg(1))
+		} else {
+			log.Fatal("invalid usage")
+		}
 		client.do()
-	case len(args) == 2 && args[0] != "get" || args[0] != "post":
-		client := newClient("GET", args[1])
-		client.do()
+	default:
+		flag.PrintDefaults()
 	}
 
 }
