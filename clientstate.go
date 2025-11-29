@@ -61,9 +61,9 @@ func (c *clientState) do() {
 			log.Fatal("error: ", err)
 		}
 
-		w.Write(buf.Bytes())
+		W.Write(buf.Bytes())
 
 	} else {
-		w.Write(data)
+		W.Write(data)
 	}
 }

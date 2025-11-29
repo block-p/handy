@@ -30,7 +30,7 @@ func (s *serverState) logger(next http.Handler) http.Handler {
 
 		rec.rw.WriteHeader(rec.statuscode)
 		rec.rw.Write(rec.data)
-		w.Write([]byte(fmt.Sprintf("%d %s  %s |> %s  %dms\n", rec.statuscode, http.StatusText(rec.statuscode), r.URL.Path, r.Method, time.Since(start).Milliseconds())))
+		W.Write([]byte(fmt.Sprintf("%d %s  %s |> %s  %dms\n", rec.statuscode, http.StatusText(rec.statuscode), r.URL.Path, r.Method, time.Since(start).Milliseconds())))
 
 	})
 }

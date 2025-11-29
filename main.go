@@ -7,10 +7,10 @@ import (
 	"os"
 )
 
-var w io.Writer
+var W io.Writer
 
 func main() {
-	w = os.Stdout
+	W = os.Stdout
 	var headerlist headers
 	var datavar data
 	serverflag := flag.Bool("s", false, "server mode usage: handy -s 127.0.0.1:8080")
